@@ -21,6 +21,8 @@ async def get_movies(
     total_items = (await db.execute(count_query)).scalar_one()
     total_pages = (total_items + per_page - 1) // per_page
 
+    if total_items == 0:
+        raise HTTPException(status_code=404, detail="Movie with the given ID was not found.")
     if page == 1:
         prev_page = None
     else:
@@ -29,8 +31,6 @@ async def get_movies(
         next_page = None
     else:
         next_page = f"/theater/movies/?page={page + 1}&per_page={per_page}"
-    if total_items == 0:
-        raise HTTPException(status_code=404, detail="No movies found.")
     return {"movies": movies,
             "prev_page": prev_page,
             "next_page": next_page,
@@ -43,5 +43,5 @@ async def get_movie_detail(movie_id: int, db: AsyncSession = Depends(get_db)):
     result = await db.execute(select(MovieModel).where(MovieModel.id == movie_id))
     movie = result.scalar_one_or_none()
     if not movie:
-        raise HTTPException(status_code=404, detail="No movie found.")
+        raise HTTPException(status_code=404, detail="Movie with the given ID was not found.")
     return movie
