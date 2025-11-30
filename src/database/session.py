@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
@@ -34,6 +35,9 @@ async def close_db() -> None:
     This function disposes of the database engine, releasing all associated resources.
     It should be called when the application shuts down to properly close the connection pool.
     """
+    if os.getenv("ENVIRONMENT") == "testing":
+        return
+
     await engine.dispose()
 
 
