@@ -22,7 +22,7 @@ async def get_movies(
     total_pages = (total_items + per_page - 1) // per_page
 
     if total_items == 0:
-        raise HTTPException(status_code=404, detail="Movie with the given ID was not found.")
+        raise HTTPException(status_code=404, detail="No movies found.")
     if page == 1:
         prev_page = None
     else:
